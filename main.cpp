@@ -7,7 +7,8 @@ void use_convert();
 
 int main() {
     cout << "Hello, World!" << endl;
-    use_string_literals();
-    use_convert();
+    cout << sizeof(wchar_t) << endl;
+    // use_string_literals();
+    // use_convert();
     return 0;
 }
