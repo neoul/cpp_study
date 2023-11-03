@@ -33,9 +33,15 @@ public:
   // _variant_t(const _variant_t &varSrc);
   // _variant_t(const _bstr_t &bstrSrc);
   _variant_t(const wchar_t *pSrc) {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt2;
-    auto utf8 = cvt2.to_bytes((wchar_t *) pSrc);
-    Var::operator=(utf8);
+    if (sizeof(wchar_t) == 4) {
+      std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt2;
+      auto utf8 = cvt2.to_bytes((char32_t *) pSrc);
+      Var::operator=(utf8);
+    } else {
+      std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> cvt2;
+      auto utf8 = cvt2.to_bytes((char16_t *) pSrc);
+      Var::operator=(utf8);
+    }
   }
   // _variant_t(const char *pSrc); // This already implemented in Var
   // ~_variant_t() throw() {  };
@@ -53,6 +59,7 @@ public:
 
 void use_variant()
 {
+  setlocale(LC_ALL, "ko_KR.UTF-8");
   Var strv1("hello");
   // Var strv2(L"wide char string: 한글"); // error!
   _variant_t v1(10);
