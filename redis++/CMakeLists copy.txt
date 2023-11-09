@@ -1,0 +1,80 @@
+# set minimum cmake version
+cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
+
+# project name and language
+project(hello LANGUAGES CXX)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(REDIS_PLUS_PLUS_CXX_STANDARD 14)
+
+find_library(HIREDIS_LIB hiredis REQUIRED)
+find_path(HIREDIS_HEADER hiredis REQUIRED)
+
+file(GLOB LIBRARY_HEADERS *.h)
+file(GLOB LIBRARY_SOURCES *.cpp)
+
+set(ALL_FILES
+    ${LIBRARY_HEADERS}
+    ${LIBRARY_SOURCES}
+)
+
+include(FetchContent)
+FetchContent_Declare(
+    mspal
+    GIT_REPOSITORY "https://github.com/neoul/mspal.git"
+    GIT_TAG "db97c56aaae3829f3281375774e99c3c80e2d00b"
+)
+FetchContent_Declare(
+    redis_plus_plus
+    GIT_REPOSITORY "https://github.com/sewenew/redis-plus-plus"
+    GIT_TAG "1.3.10"
+)
+
+if(NOT redis_plus_plus_POPULATED)
+    FetchContent_Populate(redis_plus_plus)
+    add_subdirectory(${redis_plus_plus_SOURCE_DIR} ${redis_plus_plus_BINARY_DIR} EXCLUDE_FROM_ALL)
+    set_property(DIRECTORY ${redis_plus_plus_SOURCE_DIR} APPEND PROPERTY COMPILE_DEFINITIONS -DREDIS_PLUS_PLUS_BUILD_TEST=OFF)
+endif()
+
+include(FetchContent)
+FetchContent_Declare(
+    tbb
+    GIT_REPOSITORY https://github.com/wjakob/tbb.git
+)
+
+FetchContent_MakeAvailable(tbb mspal redis_plus_plus)
+
+# find_package(TBB REQUIRED)
+# find_path(REDIS_PLUS_PLUS_HEADER sw)
+# 
+# find_package(redis++ CONFIG REQUIRED)
+add_compile_options(-fshort-wchar)
+add_compile_definitions(_SERVER)
+add_compile_definitions(_LINUX_SERVER)
+include_directories(
+    ${tbb_SOURCE_DIR}/include
+    ${redis_plus_plus_SOURCE_DIR}/src
+)
+
+
+add_subdirectory(plog)
+add_subdirectory(ThridParty)
+add_subdirectory(NPublic)
+add_subdirectory(ADODB)
+add_subdirectory(Data)
+add_subdirectory(REDIS)
+
+add_executable(hello ${ALL_FILES})
+target_include_directories(hello PUBLIC ${HIREDIS_HEADER})
+
+target_link_libraries(hello PUBLIC 
+    ${HIREDIS_LIB} redis_plus_plus
+    wpal plog ThridParty NPublic REDIS ADODB DataLib tbb)
