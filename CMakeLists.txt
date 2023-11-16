@@ -44,6 +44,10 @@ file(GLOB studycpp ./*.cpp)
 add_executable(cpp_study main.cpp ${studycpp})
 target_link_libraries(cpp_study fmt pthread Poco::Data Poco::DataODBC Poco::Foundation)
 
+add_executable(counter_macro counter_macro/counter.cpp)
+add_executable(counter_macro2 counter_macro2/counter.cpp)
+add_executable(template_specialization template_specialization/test.cpp)
+
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)

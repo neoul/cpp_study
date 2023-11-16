@@ -50,6 +50,20 @@
     "streambuf": "cpp",
     "thread": "cpp",
     "typeinfo": "cpp",
-    "codecvt": "cpp"
+    "codecvt": "cpp",
+    "format": "cpp",
+    "cstring": "cpp",
+    "cinttypes": "cpp",
+    "complex": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "optional": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "ranges": "cpp",
+    "sstream": "cpp",
+    "cfenv": "cpp",
+    "variant": "cpp"
   }
 }
